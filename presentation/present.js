@@ -85,3 +85,5 @@ async function summariseFunction(pdfRead) {
     present(title, summary);
 }
 summariseFunction(pdfRead);
+
+module.exports = summariseFunction;
