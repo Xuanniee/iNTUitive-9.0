@@ -1,10 +1,8 @@
-require('dotenv').config({path: '../.env'});   
+require('dotenv').config({path: '../.env'});    
 const Express = require('express');
-const nlpApp = Express();  
 const multer = require('multer');
 const path = require('path');
-const { PythonShell } = require('python-shell');
-const spawn = require("child_process").spawn;
+const summariseFunction = require('../presentation/present');
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
@@ -17,6 +15,19 @@ const jwt = require('jsonwebtoken');
 // Environment Variables
 const port = process.env.PORT;
 
+process.on('uncaughtException', function (err) {
+    console.error(err);
+    console.log("Node NOT Exiting...");
+});
+
+
+const nlpApp = Express();
+
+var cors = require('cors')
+nlpApp.use(cors({ 
+    credentials: true, 
+    origin: 'http://localhost:3001', 
+}));
 
 //for encryption of password 
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -106,6 +117,18 @@ nlpApp.use(cors({
     origin: 'http://localhost:3001', 
 }));
 
+//get summaries page 
+nlpApp.get('/summaries', async (req, res) => {
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        const {id} = userData;
+        //find the id in the summary model
+        res.json(await Summary.find({owner:id}));
+    })
+})
+
+
+
 // Multer Middleware to handle File Uploads
 // Set up multer instance
 const storage = multer.diskStorage({
@@ -148,16 +171,16 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
         summarisedText: summarisedText
     });
 
-    pythonProcess.stdout.on('data', (data) => {
-        // Do something with the data returned from python script
-        console.log(data);
-        pythonProcess.stdout.removeListener('data', onData);
-    });
+    // pythonProcess.stdout.on('data', (data) => {
+    //     // Do something with the data returned from python script
+    //     console.log(data);
+    //     pythonProcess.stdout.removeListener('data', onData);
+    // });
 
-    function onData(data) {
-        // Do something with the data returned from python script
-        console.log(data);
-    }
+    // function onData(data) {
+    //     // Do something with the data returned from python script
+    //     console.log(data);
+    // }
 
     // var options = {
     //     mode: 'text',
@@ -194,7 +217,7 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     // // End the PythonShell instance explicitly
     // pythonShell.end();
 
-    // pythonShell.run(summarisePyFile, options, (err, result) => {
+    // PythonShell.run("", options, (err, result) => {
     //     console.log("Python was here");
     //     if (err) {
     //         console.log(err);
@@ -217,6 +240,9 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     //     //     }
     //     // });
     // })
+
+    
+    
 })
 
 

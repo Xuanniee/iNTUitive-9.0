@@ -1,4 +1,5 @@
-require("dotenv").config();
+require('dotenv').config({path: '../.env'});    
+
 const { Configuration, OpenAIApi } = require("openai");
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
@@ -36,6 +37,7 @@ function summariseFunction(filePathToPDF) {
     }
     summarise(filePathToPDF);
     
+    /*
     function present(summary) {
         const pptxgen = require("pptxgenjs");
         let pres = new pptxgen();
@@ -262,5 +264,14 @@ function summariseFunction(filePathToPDF) {
     // ];
     // let text = "Machine learning is the future!";
     present(text);
+    */
+   let text = [
+        "What  drives  the  success  of  reforestation  projects  in  tropical  developing",
+        "the  net  loss  of  forest  area  globally  has  slowed  from  8.3  million  ha",
+        "(Meyfroidt  and  Lambin,  2011 ).Reforestation  through  planting  trees  on  cleared  land  is  an",
+        "reported  in  the  forest  transition  literature,  however  reforestation  is",
+        "increases,  the  study  of  forest  rehabilitation  could  shed  light  on",];
     return text;
 }
+
+module.exports = summariseFunction;
