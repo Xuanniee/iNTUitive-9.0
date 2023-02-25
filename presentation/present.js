@@ -22,7 +22,6 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 async function summarise(text) {
     const article = await getPDF(text);
-    //console.log(article.text.substring(0, 12000));
     const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: article.text.substring(0, 15000) + "\n\nTl:dr",
