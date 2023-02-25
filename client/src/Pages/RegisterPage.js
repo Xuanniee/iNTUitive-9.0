@@ -19,10 +19,9 @@ export default function RegisterPage() {
             alert('Registration successful. You can log in now')
 
         } catch(err) {
-            alert('Registration failed. Please try again later.')
-
+            alert('Registration failed. Please try again later.');
+            console.log(err);
         }
-        
     }
 
     return (
