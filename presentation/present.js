@@ -1,21 +1,27 @@
 require("dotenv").config();
-const { Configuration, OpenAIApi } = require("openai");
-const fs = require("fs");
-const pdfParse = require("pdf-parse");
-const getPDF = async (file) => {
-    let readFileSync = fs.readFileSync(file);
-    try {
-        let pdfExtract = await pdfParse(readFileSync);
-        // console.log("File content: ", pdfExtract.text);
-        // console.log("Total pages: ", pdfExtract.numpages);
-        // console.log("All content: ", pdfExtract.info);
-        return pdfExtract;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
+
 const pdfRead = "./Article.pdf";
+<<<<<<< HEAD
 function summariseFunction(filePathPDF) {
+=======
+
+async function summariseFunction(pdfRead) {
+    const { Configuration, OpenAIApi } = require("openai");
+    const fs = require("fs");
+    const pdfParse = require("pdf-parse");
+    const getPDF = async (file) => {
+        let readFileSync = fs.readFileSync(file);
+        try {
+            let pdfExtract = await pdfParse(readFileSync);
+            // console.log("File content: ", pdfExtract.text);
+            // console.log("Total pages: ", pdfExtract.numpages);
+            // console.log("All content: ", pdfExtract.info);
+            return pdfExtract;
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
+>>>>>>> e1773dc48abc73e714f2155d426b70b4dc5ce86a
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
     });
@@ -31,14 +37,43 @@ function summariseFunction(filePathPDF) {
             frequency_penalty: 0.0,
             presence_penalty: 1,
         });
+<<<<<<< HEAD
         return (response.data.choices[0]["text"]);
     }
      
     return summarise(filePathPDF);
 
     function present(summary) {
+=======
+
+        return [article.info["Title"], response.data.choices[0]["text"]];
+    }
+    let article_arr = await summarise(pdfRead);
+    let summary = article_arr[1].match(/([^\.!\?]+[\.!\?]+)|([^\.!\?]+$)/g);
+    console.log(article_arr);
+    let title = article_arr[0];
+    async function present(title, summary) {
+>>>>>>> e1773dc48abc73e714f2155d426b70b4dc5ce86a
         const pptxgen = require("pptxgenjs");
         let pres = new pptxgen();
+        let slide = pres.addSlide();
+        slide.addText(title, {
+            x: "10%",
+            y: "50%",
+            w: "80%",
+            fontSize: 36,
+            fill: { color: "ffffff" },
+            align: "center",
+        });
+        const response = await openai.createImage({
+            prompt: title,
+            n: 1,
+            size: "1024x1024",
+        });
+        let image_url = response.data.data[0].url;
+        slide.addImage({
+            path: image_url,
+        });
         summary.forEach((text) => {
             buildSlide(pres, text);
         });
@@ -46,7 +81,11 @@ function summariseFunction(filePathPDF) {
         pres.writeFile({ fileName: "demo.pptx" });
     }
 
+<<<<<<< HEAD
     async function buildSlide(pres, text) {
+=======
+    function buildSlide(pres, text) {
+>>>>>>> e1773dc48abc73e714f2155d426b70b4dc5ce86a
         let slide = pres.addSlide();
 
         let textboxText = text;
@@ -59,6 +98,7 @@ function summariseFunction(filePathPDF) {
         };
 
         slide.addText(textboxText, textboxOpts);
+<<<<<<< HEAD
 
         // const response = await openai
         //     .createImage({
@@ -271,3 +311,11 @@ function summariseFunction(filePathPDF) {
 }
 
 module.exports = {summariseFunction};
+=======
+    }
+    present(title, summary);
+}
+summariseFunction(pdfRead);
+
+module.exports = summariseFunction;
+>>>>>>> e1773dc48abc73e714f2155d426b70b4dc5ce86a
