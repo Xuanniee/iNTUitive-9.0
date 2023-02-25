@@ -2,11 +2,12 @@ import gensim
 from gensim.summarization import summarize
 from io import StringIO
 import PyPDF2
-import nltk
+import sys
 
-def summariseFunction(research_article):
+def summariseFunction():
     # # Open the PDF file and extract the text using PyPDF2
     # research_article = open('Article.pdf', 'rb')
+    research_article = sys.argv[1]
     pdf_reader = PyPDF2.PdfReader(research_article)
     text = ""
     for page in range(len(pdf_reader.pages)):
@@ -14,17 +15,17 @@ def summariseFunction(research_article):
 
     summary = summarize(text, ratio = 0.1, split = True)
 
-    print(type(summary))
     with open('summary.txt', 'w') as file:
         file.write(str(summary))
 
     with open('summary.txt', 'r') as file:
         summaryContents = file.read()
+    
     print(summaryContents)
-    return summaryContents
+    sys.stdout.flush()
 
-research_article = open('Article.pdf', 'rb')
-summariseFunction(research_article=research_article)
+# research_article = open('Article.pdf', 'rb')
+# summariseFunction(research_article=research_article)
 
 # # Preprocess the text by removing newlines and special characters
 # text = text.replace('\n', ' ')
