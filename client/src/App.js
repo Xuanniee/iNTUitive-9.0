@@ -8,6 +8,7 @@ import LoginPage from "./Pages/LoginPage"
 import RegisterPage from './Pages/RegisterPage';
 import axios from 'axios';
 import ProfilePage from './Pages/ProfilePage';
+import SummariesPage from './Pages/SummariesPage';
 
 
 axios.defaults.baseURL = "http://localhost:3000";
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/register" element={<RegisterPage/>}/>
           <Route path="/account" element={<ProfilePage/>}/>
+          <Route path="/account/summaries" element={<SummariesPage/>}/>
         </Route>
       </Routes>
     </UserContextProvider>
