@@ -20,10 +20,10 @@ function FileUpload() {
     })    
       .then(response => {
           console.log((response.data));
-          console.log(response.length);
-          for(let i = 0; i < response.length; i += 1){
-              array += response.data[i];
-          }
+          response.data['summarisedText'].map(data => {
+              array += data;
+          })
+
           console.log(array);
           setSummaryText(array);
         })
@@ -36,10 +36,13 @@ function FileUpload() {
     <div>
         {
         summaryText && (
-          <div>
+          <div className='flex-auto'>
+            <br></br>
             <p>
-              ${summaryText}
+              {summaryText}
             </p>
+
+            <button className="bg-gray-200 r-0 rounded-2xl py-2 px-2 object-none object-right-bottom" type="button">Click to Expand the Text</button>
           </div>
         )
         }
