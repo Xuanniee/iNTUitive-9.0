@@ -33,7 +33,7 @@ function FileUpload() {
   return (
     <form action="/upload-article" method="POST" onSubmit={handleSubmit}>
       <input type="file" onChange={handleFileInputChange} />
-      <button type="submit">Submit</button>
+      <button className="bg-gray-200 rounded-2xl py-2 px-2" type="submit">Submit</button>
     </form>
   );
 }
