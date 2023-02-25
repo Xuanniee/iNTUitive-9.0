@@ -1,5 +1,4 @@
-require('dotenv').config({path: '../.env'});    
-
+require("dotenv").config();
 const { Configuration, OpenAIApi } = require("openai");
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
@@ -265,5 +264,3 @@ function summariseFunction(filePathToPDF) {
     present(text);
     return text;
 }
-
-module.exports = summariseFunction;
