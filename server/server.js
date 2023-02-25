@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const { PythonShell } = require('python-shell');
 const spawn = require("child_process").spawn;
+const summariseFunction = require('../presentation/present');
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
@@ -56,7 +57,8 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
 
     // Call the Summary Function in Python
     // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle.path]);
-    const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
+    summariseFunction(uploadedArticle);
+    // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
 
     // pythonProcess.stdout.on('data', (data) => {
     //     // Do something with the data returned from python script
@@ -69,14 +71,14 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     //     console.log(data);
     // }
 
-    var options = {
-        mode: 'text',
-        pythonPath: "/opt/homebrew/bin/python3.9",
-        pythonOptions: ['-u'],
-        // make sure you use an absolute path for scriptPath
-        scriptPath: "/Users/ngxua/WebDevelopmentProjects/iNTUitive-9.0/server/nlp-gensim",
-        args: [uploadedArticle.filename]
-    };
+    // var options = {
+    //     mode: 'text',
+    //     pythonPath: "/opt/homebrew/bin/python3.9",
+    //     pythonOptions: ['-u'],
+    //     // make sure you use an absolute path for scriptPath
+    //     scriptPath: "/Users/ngxua/WebDevelopmentProjects/iNTUitive-9.0/server/nlp-gensim",
+    //     args: [uploadedArticle.filename]
+    // };
     
     // console.log("Before Python");
     // // create a new PythonShell instance
@@ -104,29 +106,29 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     // // End the PythonShell instance explicitly
     // pythonShell.end();
 
-    PythonShell.run("", options, (err, result) => {
-        console.log("Python was here");
-        if (err) {
-            console.log(err);
-            response.status(500).send("Error 500: Server Error");
-        }
-        else {
-            console.log(result);
-            const summary = result.join(' '); // join the list of sentences into a single string
-            response.status(200).json({
-                uploadSuccess: true,
-                title: uploadedArticle.filename,
-                summary: summary // send the summary as a property in the response JSON object
-            });
-        }
+    // PythonShell.run("", options, (err, result) => {
+    //     console.log("Python was here");
+    //     if (err) {
+    //         console.log(err);
+    //         response.status(500).send("Error 500: Server Error");
+    //     }
+    //     else {
+    //         console.log(result);
+    //         const summary = result.join(' '); // join the list of sentences into a single string
+    //         response.status(200).json({
+    //             uploadSuccess: true,
+    //             title: uploadedArticle.filename,
+    //             summary: summary // send the summary as a property in the response JSON object
+    //         });
+    //     }
 
-        // end the PythonShell instance explicitly
-        // pythonShell.end(function (err) {
-        //     if (err) {
-        //         console.log(err);
-        //     }
-        // });
-    })
+    //     // end the PythonShell instance explicitly
+    //     // pythonShell.end(function (err) {
+    //     //     if (err) {
+    //     //         console.log(err);
+    //     //     }
+    //     // });
+    // })
 
     
     
