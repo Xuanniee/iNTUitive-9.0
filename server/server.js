@@ -1,10 +1,10 @@
-require('dotenv').config({path: '../.env'});   
+require('dotenv').config({path: '../.env'});    
 const Express = require('express');
-const nlpApp = Express();  
 const multer = require('multer');
 const path = require('path');
 const { PythonShell } = require('python-shell');
 const spawn = require("child_process").spawn;
+const summariseFunction = require('../presentation/present');
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
@@ -18,91 +18,10 @@ const jwt = require('jsonwebtoken');
 const port = process.env.PORT;
 
 
-//for encryption of password 
-const bcryptSalt = bcrypt.genSaltSync(10);
+const nlpApp = Express();
 
-const jwtSecret = "jwindjncidwncjenjin";
-
-nlpApp.use(Express.json());
-nlpApp.use(CookieParser());
-
-//nlpApp.use(cors());
-
-
-nlpApp.use(cors({
-    credentials: true,
-    origin: 'http://localhost:3001',
-  }));
-
-
-//connect to mongoose using url
-mongoose.connect(process.env.MONGO_URL);
-
-nlpApp.get('/profile', (req,res) => {
-    //verify token --> get user data 
-    const {token} = req.cookies;
-    if (token) {
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-            if (err) throw err;
-            const {name, email,_id} = await User.findById(userData.id);
-            res.json({name,email,_id});
-        })
-    } else {
-        res.json(null);
-    }
-})
-
-//register user 
-nlpApp.post('/register', async (req, res) => {
-    const {name, email, password} = req.body;
-    try {
-        const user = await User.create({
-            name, email, 
-            password: bcrypt.hashSync(password, bcryptSalt)
-        })
-        res.json(user);
-    } catch (e) {
-        res.status(422).json(e);
-        console.log(e);
-    }
-})
-
-//user log in --> check 
-nlpApp.post('/login', async (req,res) => {
-    //get name and password form the user 
-    const {email, password} = req.body;
-    //find user using email
-    const user = await User.findOne({email});
-
-    console.log()
-
-    console.log(user);
-
-    //if userexists in database
-    if (user) {
-        //check if password is the same
-        const pass = bcrypt.compareSync(password, user.password);
-        if (pass) {
-            //create cookie 
-            jwt.sign({
-                email:user.email, 
-                id:user._id}
-                , jwtSecret, {}, (err, token) => {
-                if (err) throw err;
-                res.cookie('token', token, {httpOnly: true, sameSite: 'None', secure: true}).json(user);
-            });
-        }
-        else {
-            res.status(422).json('pass not ok');
-        }
-    } else {
-        res.json('not found');
-    }
-})
-
-nlpApp.post('/logout', (req,res) => {
-    res.cookie('token', "").json(true);
-})
+var cors = require('cors')
+nlpApp.use(cors());
 
 // Multer Middleware to handle File Uploads
 // Set up multer instance
@@ -137,18 +56,20 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     }
 
     // Call the Summary Function in Python
-    const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
+    // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle.path]);
+    summariseFunction(uploadedArticle);
+    // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
 
-    pythonProcess.stdout.on('data', (data) => {
-        // Do something with the data returned from python script
-        console.log(data);
-        pythonProcess.stdout.removeListener('data', onData);
-    });
+    // pythonProcess.stdout.on('data', (data) => {
+    //     // Do something with the data returned from python script
+    //     console.log(data);
+    //     pythonProcess.stdout.removeListener('data', onData);
+    // });
 
-    function onData(data) {
-        // Do something with the data returned from python script
-        console.log(data);
-    }
+    // function onData(data) {
+    //     // Do something with the data returned from python script
+    //     console.log(data);
+    // }
 
     // var options = {
     //     mode: 'text',
@@ -185,7 +106,7 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     // // End the PythonShell instance explicitly
     // pythonShell.end();
 
-    // pythonShell.run(summarisePyFile, options, (err, result) => {
+    // PythonShell.run("", options, (err, result) => {
     //     console.log("Python was here");
     //     if (err) {
     //         console.log(err);
