@@ -5,8 +5,17 @@ const path = require('path');
 const { PythonShell } = require('python-shell');
 const spawn = require("child_process").spawn;
 
+const mongoose = require('mongoose');
+const User = require('./models/User');
+const SummaryModel = require('./models/Summary');
+var cors = require('cors');
+const CookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 // Environment Variables
-const port = process.env.PORT
+const port = process.env.PORT;
+
 
 const nlpApp = Express();
 
@@ -35,7 +44,7 @@ const summarisePyFile = path.join(__dirname, 'nlp-gensim', 'summarise.py');
 nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => {
     console.log('Received file upload request');
     const uploadedArticle = request.file;
-    console.log('Uploaded file:', uploadedArticle);
+    //console.log('Uploaded file:', uploadedArticle);
 
     // Process the PDF file and send a response indicating success or failure
     if (uploadedArticle) {
@@ -47,6 +56,7 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
 
     // Call the Summary Function in Python
     // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle.path]);
+    const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
 
     // pythonProcess.stdout.on('data', (data) => {
     //     // Do something with the data returned from python script
