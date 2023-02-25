@@ -27,13 +27,10 @@ nlpApp.use(Express.json());
 nlpApp.use(CookieParser());
 
 //nlpApp.use(cors());
-
-
 nlpApp.use(cors({
     credentials: true,
     origin: 'http://localhost:3001',
   }));
-
 
 //connect to mongoose using url
 mongoose.connect(process.env.MONGO_URL);
@@ -208,9 +205,6 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     //     //     }
     //     // });
     // })
-
-    
-    
 })
 
 
