@@ -17,7 +17,7 @@ const getPDF = async (file) => {
 };
 const pdfRead = "./Article.pdf";
 
-function summariseFunction(pdfRead) {
+function summariseFunction(filePathToPDF) {
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
     });
@@ -35,7 +35,7 @@ function summariseFunction(pdfRead) {
         });
         console.log(response.data.choices[0]["text"]);
     }
-    summarise(pdfRead);
+    summarise(filePathToPDF);
     
     function present(summary) {
         const pptxgen = require("pptxgenjs");
@@ -263,6 +263,7 @@ function summariseFunction(pdfRead) {
     // ];
     // let text = "Machine learning is the future!";
     present(text);
+    return text;
 }
 
 module.exports = summariseFunction;
