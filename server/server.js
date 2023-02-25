@@ -8,7 +8,7 @@ const spawn = require("child_process").spawn;
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
-const SummaryModel = require('./models/Summary');
+const Summary = require('./models/Summary');
 var cors = require('cors');
 const CookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
@@ -100,6 +100,17 @@ nlpApp.post('/login', async (req,res) => {
 nlpApp.post('/logout', (req,res) => {
     res.cookie('token', "").json(true);
 })
+
+//get summaries page 
+nlpApp.get('/summaries', async (req, res) => {
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        const {id} = userData;
+        //find the id in the summary model
+        res.json(await Summary.find({owner:id}));
+    })
+})
+
 
 // Multer Middleware to handle File Uploads
 // Set up multer instance
