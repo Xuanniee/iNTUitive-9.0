@@ -100,6 +100,11 @@ nlpApp.post('/login', async (req,res) => {
 nlpApp.post('/logout', (req,res) => {
     res.cookie('token', "").json(true);
 })
+var cors = require('cors')
+nlpApp.use(cors({ 
+    credentials: true, 
+    origin: 'http://localhost:3001', 
+}));
 
 //get summaries page 
 nlpApp.get('/summaries', async (req, res) => {
@@ -139,13 +144,20 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     // Process the PDF file and send a response indicating success or failure
     if (uploadedArticle) {
         console.log(`Uploaded file: ${uploadedArticle.filename}`);
-        response.status(200).send('File uploaded successfully.');
+        console.log('File uploaded successfully.');
     } else {
         response.status(400).send('No file uploaded.');
     }
 
     // Call the Summary Function in Python
-    const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
+    // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle.path]);
+    // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
+    const pdfPath = path.join(__dirname, 'uploads', uploadedArticle.filename);
+
+    const summarisedText = summariseFunction(pdfPath);
+    response.status(200).json({
+        summarisedText: summarisedText
+    });
 
     pythonProcess.stdout.on('data', (data) => {
         // Do something with the data returned from python script
