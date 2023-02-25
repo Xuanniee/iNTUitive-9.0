@@ -15,8 +15,7 @@ const getPDF = async (file) => {
     }
 };
 const pdfRead = "./Article.pdf";
-
-function summariseFunction(filePathToPDF) {
+function summariseFunction(filePathPDF) {
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
     });
@@ -32,23 +31,24 @@ function summariseFunction(filePathToPDF) {
             frequency_penalty: 0.0,
             presence_penalty: 1,
         });
-        console.log(response.data.choices[0]["text"]);
+        return (response.data.choices[0]["text"]);
     }
-    summarise(filePathToPDF);
-    
+     
+    return summarise(filePathPDF);
+
     function present(summary) {
         const pptxgen = require("pptxgenjs");
         let pres = new pptxgen();
         summary.forEach((text) => {
             buildSlide(pres, text);
         });
-    
+
         pres.writeFile({ fileName: "demo.pptx" });
     }
-    
+
     async function buildSlide(pres, text) {
         let slide = pres.addSlide();
-    
+
         let textboxText = text;
         let textboxOpts = {
             x: 0,
@@ -57,9 +57,9 @@ function summariseFunction(filePathToPDF) {
             fontSize: 36,
             fill: { color: "ffffff" },
         };
-    
+
         slide.addText(textboxText, textboxOpts);
-    
+
         // const response = await openai
         //     .createImage({
         //         prompt: text,
@@ -76,6 +76,8 @@ function summariseFunction(filePathToPDF) {
         //         });
         //     });
     }
+
+    /*
     let text = [
         "What  drives  the  success  of  reforestation  projects  in  tropical  developing",
         "the  net  loss  of  forest  area  globally  has  slowed  from  8.3  million  ha",
@@ -83,6 +85,7 @@ function summariseFunction(filePathToPDF) {
         "reported  in  the  forest  transition  literature,  however  reforestation  is",
         "increases,  the  study  of  forest  rehabilitation  could  shed  light  on",
     ];
+    */
     //     "Little  information  exists  to  indicate  the  success  of  reforestation",
     //     "projects  in  achieving  ecological  or  socio-economic  beneﬁts.",
     //     "planted  trees  have  survived  to  maturity,  they  have  not  necessarilyGlobal  Environmental  Change  24  (2014)  334–348",
@@ -261,6 +264,10 @@ function summariseFunction(filePathToPDF) {
     //     "Forest  restoration  and  rehabilitation  in  the  philippines.",
     // ];
     // let text = "Machine learning is the future!";
+    /*
     present(text);
     return text;
+    */
 }
+
+module.exports = {summariseFunction};
