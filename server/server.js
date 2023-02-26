@@ -137,7 +137,9 @@ const summarisePyFile = path.join(__dirname, 'nlp-gensim', 'summarise.py');
 /**
  * File Upload via POST
  */
-nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => {
+
+
+nlpApp.post('/upload-article', upload.single('pdfFile'), async (request, response) => {
     console.log('Received file upload request');
     const uploadedArticle = request.file;
     //console.log('Uploaded file:', uploadedArticle);
@@ -154,12 +156,16 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
     // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle.path]);
     // const pythonProcess = spawn('python3.9', [summarisePyFile, uploadedArticle]);
     const pdfPath = path.join(__dirname, 'uploads', uploadedArticle.filename);
+    //pdfPath
 
-    const summarisedText = summariseFunction(pdfPath);
+
+    const summarisedText = await summariseFunction(pdfPath);
+    console.log("Summarised text in server:" + summarisedText);
     response.status(200).json({
         summarisedText: summarisedText
     });
 
+    /*
     pythonProcess.stdout.on('data', (data) => {
         // Do something with the data returned from python script
         console.log(data);
@@ -170,6 +176,7 @@ nlpApp.post('/upload-article', upload.single('pdfFile'), (request, response) => 
         // Do something with the data returned from python script
         console.log(data);
     }
+    */
 
     // var options = {
     //     mode: 'text',

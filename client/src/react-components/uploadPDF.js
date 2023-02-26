@@ -4,7 +4,7 @@ import axios from 'axios';
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [summaryText, setSummaryText] = useState("");
-  var array = "";
+  const [ready, setReady] = useState(null);
 
   const handleFileInputChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -14,18 +14,24 @@ function FileUpload() {
     event.preventDefault();
     const formData = new FormData();
     formData.append('pdfFile', selectedFile);
-    console.log(Object.fromEntries(formData.entries()));
-    await axios.post('http://localhost:3000/upload-article', formData, {
+    //console.log(Object.fromEntries(formData.entries()));
+    await axios.post('/upload-article', formData, {
       headers: {'Content-Type': 'application/pdf'},
     })    
       .then(response => {
-          console.log((response.data));
-          response.data['summarisedText'].map(data => {
+
+          //console.log(("response:" + response));
+          //console.log(("response data:" + response.data));
+          /*response.data['summarisedText'].map(data => {
               array += data;
           })
-
-          console.log(array);
-          setSummaryText(array);
+          //console.log(array);*/
+          console.log("Response:" + JSON.stringify(response.data.summarisedText));
+          let summary = JSON.stringify(response.data.summarisedText);
+          summary.replace(/"/g, '');
+          summary.replace(/\n/g, '');
+          console.log("Updated summary:" + summary);
+          setSummaryText(summary);
         })
       // .then(data => console.log(data))
       .catch(error => console.error(error));
@@ -42,7 +48,7 @@ function FileUpload() {
               {summaryText}
             </p>
 
-            <button className="bg-gray-200 r-0 rounded-2xl py-2 px-2 object-none object-right-bottom" type="button">Click to Expand the Text</button>
+            {/*<button className="bg-gray-200 r-0 rounded-2xl py-2 px-2 object-none object-right-bottom" type="button">Click to Expand the Text</button>*/}
           </div>
         )
         }
